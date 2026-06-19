@@ -154,79 +154,7 @@ store-rating-app/
 | Password | 8–16 chars + 1 uppercase + 1 special character |
 | Rating | Integer 1–5 |
 
----
-
-## Setup & Running
-
-### Option 1: Docker Compose (recommended)
-
-```bash
-docker-compose up --build
-```
-
 App available at: http://localhost:3000  
 API at: http://localhost:5000
 
-### Option 2: Manual Setup
 
-**Prerequisites:** Node.js 18+, PostgreSQL 14+
-
-**Backend:**
-```bash
-cd backend
-cp .env.example .env      # edit with your DB credentials
-npm install
-npm run dev               # starts on port 5000
-```
-
-**Frontend:**
-```bash
-cd frontend
-npm install
-npm start                 # starts on port 3000 (proxies /api to :5000)
-```
-
-**Database:** Create a PostgreSQL database named `store_rating_db`. Tables are auto-created via Sequelize `sync({ alter: true })` on first run.
-
----
-
-## Default Admin Account
-
-On first startup, a default admin is seeded automatically:
-
-```
-Email:    admin@storerating.com
-Password: Admin@123
-```
-
----
-
-## User Roles & Capabilities
-
-| Capability | Admin | Normal User | Store Owner |
-|---|---|---|---|
-| Sign up | — | ✅ | — |
-| Login | ✅ | ✅ | ✅ |
-| Update password | ✅ | ✅ | ✅ |
-| View dashboard stats | ✅ | — | — |
-| Add users (any role) | ✅ | — | — |
-| Add stores | ✅ | — | — |
-| View/filter all users | ✅ | — | — |
-| View/filter all stores | ✅ | — | — |
-| View user details | ✅ | — | — |
-| Browse & search stores | — | ✅ | — |
-| Submit/update ratings | — | ✅ | — |
-| View store analytics | — | — | ✅ |
-| View raters list | — | — | ✅ |
-
----
-
-## Key Design Decisions
-
-- **Single login endpoint** for all roles — role determines redirect after login
-- **JWT-based auth** — stateless, stored in localStorage
-- **Sequelize `findOrCreate`** for ratings — submit and update share one endpoint
-- **Password hashing** in model hooks (beforeCreate/beforeUpdate) — never stored in plain text
-- **`express-validator`** for server-side validation — mirrors client-side rules
-- **Role guard middleware** (`authorize(...roles)`) — composable, reusable across routes
-- **Soft average rating** — computed on read, not stored — always consistent
